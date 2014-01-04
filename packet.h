@@ -2,10 +2,12 @@
 #define __packet__
 
 #include <stdint.h>
-typedef union Packet Packet;
+typedef struct IPv4Header IPv4Header;
+typedef struct UDPPacket UDPPacket;
 
 #pragma pack(push)
 #pragma pack(1) // Aligment to 1 byte boundary
+
 /* IPv4 Header */
 struct IPv4Header
 {
@@ -28,55 +30,40 @@ struct IPv4Header
 };
 
 /*
- * TCP/UDP Packet Structures 
+ * UDP Packet Structures 
  */
-union Packet
+struct  UDPPacket
 {
-	struct
-	{
-		uint16_t	src_port;	// Source Port
-		uint16_t	dest_port;	// Destination Port
-		uint32_t	seq_num;	// Sequence Number
-		uint32_t	ack_num;	// Acknowledgement Number
-		
-		uint8_t		dat_offset : 4;	// Data Offset
-		uint8_t		resv : 3;	// Reserved
-		
-		union
-		{
-			struct
-			{
-				uint8_t	ns : 1;		// ECN-nonce concealment protection
-				uint8_t cwr : 1;	// Congestion Window Reduced 
-				uint8_t ece : 1;	// Echo
-				uint8_t urg : 1;	// Urgent
-				uint8_t ack : 1;	// ACK
-				uint8_t psh : 1;	// Push Function
-				uint8_t rst : 1;	// Reset
-				uint8_t syn : 1;	// Synchronize Sequence Numbers
-				uint8_t fin : 1;	// Finished/Final
-			} tcp_flags;
-			
-			uint16_t	tcp_field;
-		} flags;
-		
-		uint32_t	windowsz;	// Window Size
-		uint32_t	checksum;	// Checksum
-		uint32_t	urg_ptr;	// Urgent Pointer
-		
-		uint64_t	options;	// Options, if data offset > 5, is 0 padded
-	} tcp;
-
-	struct
-	{
-		uint16_t	src_port;	// Source Port
-		uint16_t	dest_port;	// Destination Port
-		uint16_t	length;		// Length
-		uint16_t	checksum;	// Checksum
-	} udp;
+	uint16_t	src_port;	// Source Port
+	uint16_t	dest_port;	// Destination Port
+	uint16_t	length;		// Length
+	uint16_t	checksum;	// Checksum
 };
-#pragma pack(pop)
-	
 
+struct MDNSPacket
+{
+	uint16_t	id;		// ID
+
+	union
+	{
+		uint16_t field;
+		struct
+		{
+			uint8_t	qr;		// Query Response
+			uint8_t	opcode : 4; 	// Request operation type
+			uint8_t	aa : 1;		// Authoritative Answer;
+			uint8_t	tc : 1;		// Truncation
+			uint8_t rd : 1; 	// Recursion Desired
+			uint8_t rcode : 4;	// Response Type
+		} flag;
+	} flags;
+
+	uint16_t	qdcount;	// # of items in Question ection
+	uint16_t	ancount;	// # of items in Answer section
+	uint16_t	nscount;	// # of items in Authority section
+	uint16_t	arcount;	// # of items in additional section
+};
+
+#pragma pack(pop)
 
 #endif
