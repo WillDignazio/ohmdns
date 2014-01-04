@@ -10,7 +10,7 @@ CSRC=	packet.c \
 COBJS=$(CSRC:.c=.o)
 
 all: $(COBJS)
-	$(CC) $(CFLAGS) $(LIBS) main.c $(COBJS) -o ohmd
+	$(CC) $(CFLAGS) $(LIBS) ohmd.c $(COBJS) -o ohmd
 
 .o: internal.h error.h packet.h
 	$(CC) $(CFLAGS) -c $<
