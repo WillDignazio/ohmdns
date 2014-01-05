@@ -17,5 +17,6 @@ all: $(COBJS)
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	@rm *.o
-	@rm ohmd
+	@rm -f *.o
+	@rm -f ohmd
+	@rm -rf *.dSYM
