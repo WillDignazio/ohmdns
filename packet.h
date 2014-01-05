@@ -4,6 +4,7 @@
 #include <stdint.h>
 typedef struct IPv4Header IPv4Header;
 typedef struct UDPPacket UDPPacket;
+typedef struct MDNSPacket MDNSPacket;
 
 #pragma pack(push)
 #pragma pack(1) // Aligment to 1 byte boundary
@@ -65,5 +66,12 @@ struct MDNSPacket
 };
 
 #pragma pack(pop)
+
+extern IPv4Header*	ohm_alloc_header(Error* err);
+extern UDPPacket*	ohm_alloc_udp_packet(Error* err);
+extern MDNSPacket*	ohm_alloc_mdns_packet(Error* err);
+extern void		ohm_free_header(IPv4Header* header);
+extern void		ohm_free_udp_packet(UDPPacket* packet);
+extern void		ohm_free_mdns_packet(MDNSPacket* packet);
 
 #endif
