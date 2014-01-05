@@ -82,8 +82,14 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 		goto fail;
 	}
 
+	/* Setup the socket to the correct multicast address for mdns */
 	r = inet_pton(AF_INET, MDNS_ADDR_STR, &m_in);
 	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_IF, &m_in, sizeof(m_in));
+	if(r == -1) {
+		error_host(err);
+		r = -1;
+		goto fail;
+	}
 	
 	sock->s_in = s_in;
 	sock->sfd = sfd;
