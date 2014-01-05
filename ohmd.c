@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "internal.h"
 
 #if 0
@@ -23,12 +25,22 @@ main(int argc, char* argv[])
 	int r;
 
 	sock = ohm_alloc_socket(&err);
-	if(sock == NULL)
+	if(sock == NULL) {
 		fprintf(stderr, "%s\n", err.estr);
+		exit(1);
+	}
 
 	r = ohm_open_socket(5555, sock, &err);
-	if(r == -1)
+	if(r == -1) {
 		fprintf(stderr, "%s\n", err.estr);
+		exit(1);
+        }
+
+	r = ohm_close_socket(sock, &err);
+	if(r == -1) {
+		fprintf(stderr, "%s\n", err.estr);
+		exit(1);
+	}
 
 	return 0;
 }

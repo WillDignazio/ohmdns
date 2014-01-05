@@ -15,4 +15,9 @@ struct Error
 
 extern int	error_host(Error* err);
 
+enum
+{
+	ERROR_SOCK,
+};
+
 #endif
