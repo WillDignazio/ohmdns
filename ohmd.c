@@ -18,6 +18,17 @@ printbn(uint64_t val, int bits)
 int
 main(int argc, char* argv[])
 {
+	OhmSocket* sock;
+	Error err;
+	int r;
+
+	sock = ohm_alloc_socket(&err);
+	if(sock == NULL)
+		fprintf(stderr, "%s\n", err.estr);
+
+	r = ohm_open_socket(5555, sock, &err);
+	if(r == -1)
+		fprintf(stderr, "%s\n", err.estr);
 
 	return 0;
 }

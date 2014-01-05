@@ -5,7 +5,8 @@ LIBS=
 .PHONY: all clean
 
 CSRC=	packet.c \
-	error.c
+	error.c \
+	ohm.c
 
 COBJS=$(CSRC:.c=.o)
 
