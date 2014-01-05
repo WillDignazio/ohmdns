@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include "internal.h"
 
 OhmSocket*
@@ -41,10 +42,13 @@ int
 ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 {
 	struct sockaddr_in s_in;
+	struct in_addr m_in; // Multicast Address
 	int sfd;
 	int r;
+	unsigned char opt_loop;
 
 	r = 0;
+	opt_loop = 1;
 
 	if(sock == NULL) {
 		r = -1;
@@ -63,15 +67,24 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 	s_in.sin_addr.s_addr = htonl(INADDR_ANY);
 	s_in.sin_port = htons(port);
 
-	printf("Binding\n");
 	r = bind(sfd, (struct sockaddr*)&s_in, sizeof(s_in));
 	if(r == -1) {
-		printf("Binding Failed\n");
 		error_host(err);
 		r = -1;
 		goto fail;
 	}
 
+	/* Setup the socket to loopback the data it gets */
+	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_LOOP, &opt_loop, sizeof(uint8_t));
+	if(r == -1) {
+		error_host(err);
+		r = -1;
+		goto fail;
+	}
+
+	r = inet_pton(AF_INET, MDNS_ADDR_STR, &m_in);
+	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_IF, &m_in, sizeof(m_in));
+	
 	sock->s_in = s_in;
 	sock->sfd = sfd;
 
