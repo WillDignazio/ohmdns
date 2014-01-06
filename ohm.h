@@ -16,8 +16,8 @@ struct OhmSocket
 };
 
 extern OhmSocket*	ohm_alloc_socket(Error* err);
-extern int		ohm_open_socket(int port, OhmSocket* sock, Error* err);
-extern int		ohm_open_socket4(int port, OhmSocket* sock, Error* err);
+extern int		ohm_open_socket(int port, char* addrstr, OhmSocket* sock, Error* err);
+extern int		ohm_open_socket4(int port, char* addrstr, OhmSocket* sock, Error* err);
 extern int		ohm_close_socket(OhmSocket* sock, Error* err);
 extern int		ohm_close_socket4(OhmSocket* sock, Error* err);
 

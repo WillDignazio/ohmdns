@@ -40,37 +40,39 @@ ohm_free_socket(OhmSocket* sock)
 }
 
 int
-ohm_open_socket4(int port, OhmSocket* sock, Error* err)
+ohm_open_socket4(int port, char* addrstr, OhmSocket* sock, Error* err)
 {
 	struct sockaddr_in s_in;
 	struct ip_mreq mreq;
 	int sfd;
 	int r;
 	unsigned char opt_loop;
+	int opt_reuse; // XXX: Must be int...
 
 	r = 0;
 	opt_loop = 1;
+	opt_reuse = 1;
 
 	if(sock == NULL) {
 		r = -1;
+		ewarn("NULL socket attempted to be opened");
 		goto fail;
 	}
 	
-	sfd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
-	if(sfd == 1) {
+	sfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if(sfd == -1) {
 		esys(err, "Failed to allocate system socket");
 		r = -1;
 		goto fail;
 	}
 
-	memset(&s_in, 0, sizeof(s_in));
-	s_in.sin_family = AF_INET;
-	s_in.sin_addr.s_addr = htonl(INADDR_ANY);
-	s_in.sin_port = htons(port);
-
-	r = bind(sfd, (struct sockaddr*)&s_in, sizeof(s_in));
+	/*
+	 * XXX: Must be done before bind
+	 * Allow the 'reuse' of an address+port for the bound sockets
+	 */
+	r = setsockopt(sfd, SOL_SOCKET, SO_REUSEPORT, &opt_reuse, sizeof(opt_reuse));
 	if(r == -1) {
-		esys(err, "Failed to bind system socket");
+		esys(err, "Failed to set SO_REUSEPORT on socket");
 		r = -1;
 		goto fail;
 	}
@@ -84,9 +86,8 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 	}
 
 	/* Enlist the socket in the multicast group */
-//	inet_pton(AF_INET, MDNS_ADDR_STR, &addr);
 	mreq.imr_multiaddr.s_addr = inet_addr(MDNS_ADDR_STR);
-	mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+	mreq.imr_interface.s_addr = inet_addr(addrstr);
 
 	r = setsockopt(sfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
 	if(r < 0) {
@@ -95,10 +96,24 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 		goto fail;
 	}
 
+	memset(&s_in, 0, sizeof(s_in));
+	s_in.sin_family = AF_INET;
+	s_in.sin_addr.s_addr = htonl(INADDR_ANY);
+	s_in.sin_port = htons(port);
+
+	/* Bind the socket to the interface */
+	r = bind(sfd, (struct sockaddr*)&s_in, sizeof(s_in));
+	if(r == -1) {
+		esys(err, "Failed to bind system socket");
+		r = -1;
+		goto fail;
+	}
+
 	sock->mreq = mreq;
 	sock->s_in = s_in;
 	sock->sfd = sfd;
 
+	return 0;
 fail:
 	if(sock) {
 		close(sock->sfd);
@@ -134,9 +149,9 @@ fail:
 }
 
 int
-ohm_open_socket(int port, OhmSocket* sock, Error* err)
+ohm_open_socket(int port, char* addrstr, OhmSocket* sock, Error* err)
 {
-	return ohm_open_socket4(port, sock, err);
+	return ohm_open_socket4(port, addrstr, sock, err);
 }
 
 int
