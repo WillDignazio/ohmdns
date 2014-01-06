@@ -3,7 +3,7 @@
 #include "internal.h"
 
 IPv4Header*
-ohm_alloc_header(Error* err)
+packet_alloc_header(Error* err)
 {
 	IPv4Header* header;
 	
@@ -17,7 +17,7 @@ ohm_alloc_header(Error* err)
 }
 
 void
-ohm_free_header(IPv4Header* header)
+packet_free_header(IPv4Header* header)
 {
 	if(header == NULL)
 		return;
@@ -26,7 +26,7 @@ ohm_free_header(IPv4Header* header)
 }
 
 UDPPacket*
-ohm_alloc_udp_packet(Error* err)
+packet_alloc_udp_packet(Error* err)
 {
 	UDPPacket* udpp;
 
@@ -40,7 +40,7 @@ ohm_alloc_udp_packet(Error* err)
 }
 
 void
-ohm_free_udp_packet(UDPPacket* packet)
+packet_free_udp_packet(UDPPacket* packet)
 {
 	if(packet == NULL)
 		return;
@@ -49,7 +49,7 @@ ohm_free_udp_packet(UDPPacket* packet)
 }
 
 MDNSPacket*
-ohm_alloc_mdns_packet(Error* err)
+packet_alloc_mdns_packet(Error* err)
 {
 	MDNSPacket* packet;
 	
@@ -63,7 +63,7 @@ ohm_alloc_mdns_packet(Error* err)
 }
 
 void
-ohm_free_mdns_packet(MDNSPacket* packet)
+packet_free_mdns_packet(MDNSPacket* packet)
 {
 	if(packet == NULL)
 		return;
