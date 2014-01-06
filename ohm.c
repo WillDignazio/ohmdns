@@ -16,7 +16,8 @@ ohm_alloc_socket(Error* err)
 	r = 0;
 	sock = malloc(sizeof(*sock));
 	if(sock == NULL) {
-		r = error_host(err);
+		esys(err, "Failed to allocate custom Ohm Socket");
+		r = -1;
 		goto fail;
 	}
 
@@ -57,7 +58,7 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 	
 	sfd = socket(AF_INET, SOCK_RAW, IPPROTO_UDP);
 	if(sfd == 1) {
-		error_host(err);
+		esys(err, "Failed to allocate system socket");
 		r = -1;
 		goto fail;
 	}
@@ -69,7 +70,7 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 
 	r = bind(sfd, (struct sockaddr*)&s_in, sizeof(s_in));
 	if(r == -1) {
-		error_host(err);
+		esys(err, "Failed to bind system socket");
 		r = -1;
 		goto fail;
 	}
@@ -77,7 +78,7 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 	/* Setup the socket to loopback the data it gets */
 	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_LOOP, &opt_loop, sizeof(uint8_t));
 	if(r == -1) {
-		error_host(err);
+		esys(err, "Failed to set socket option for multicast loop");
 		r = -1;
 		goto fail;
 	}
@@ -86,7 +87,7 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 	r = inet_pton(AF_INET, MDNS_ADDR_STR, &m_in);
 	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_IF, &m_in, sizeof(m_in));
 	if(r == -1) {
-		error_host(err);
+		esys(err, "Failed to set socket option for multicast address");
 		r = -1;
 		goto fail;
 	}
@@ -118,7 +119,7 @@ ohm_close_socket4(OhmSocket* sock, Error* err)
 	/* Close actual socket */
 	r = close(sock->sfd);
 	if(r == -1) {
-		error_host(err);
+		esys(err, "Error closing system socket");
 		goto fail;
 	}
 

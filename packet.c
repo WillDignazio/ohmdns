@@ -9,7 +9,7 @@ ohm_alloc_header(Error* err)
 	
 	header = malloc(sizeof(*header));
 	if(header == NULL) {
-		error_host(err);
+		esys(err, "Failed to allocate header");
 		return NULL;
 	}
 
@@ -32,7 +32,7 @@ ohm_alloc_udp_packet(Error* err)
 
 	udpp = malloc(sizeof(*udpp));
 	if(udpp == NULL) {
-		error_host(err);
+		esys(err, "Failed to allocate UDP packet");
 		return NULL;
 	}
 
@@ -55,7 +55,7 @@ ohm_alloc_mdns_packet(Error* err)
 	
 	packet = malloc(sizeof(*packet));
 	if(packet == NULL) {
-		error_host(err);
+		esys(err, "Failed to allocate MDNS packet");
 		return NULL;
 	}
 
