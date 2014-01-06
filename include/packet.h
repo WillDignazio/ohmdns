@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 typedef struct IPv4Header IPv4Header;
-typedef struct UDPPacket UDPPacket;
+typedef struct UDPHeader UDPHeader;
 typedef struct MDNSPacket MDNSPacket;
 
 #pragma pack(push)
@@ -30,10 +30,8 @@ struct IPv4Header
 	uint32_t	options;	// Padding (for IHL > 5)
 };
 
-/*
- * UDP Packet Structures 
- */
-struct  UDPPacket
+/* UDP Header */
+struct  UDPHeader
 {
 	uint16_t	src_port;	// Source Port
 	uint16_t	dest_port;	// Destination Port
@@ -41,6 +39,7 @@ struct  UDPPacket
 	uint16_t	checksum;	// Checksum
 };
 
+/* MDNS Packet */
 struct MDNSPacket
 {
 	uint16_t	id;		// ID
@@ -67,11 +66,11 @@ struct MDNSPacket
 
 #pragma pack(pop)
 
-extern IPv4Header*	packet_alloc_header(Error* err);
-extern UDPPacket*	packet_alloc_udp(Error* err);
+extern IPv4Header*	packet_alloc_ip4_header(Error* err);
+extern UDPHeader*	packet_alloc_udp_header(Error* err);
 extern MDNSPacket*	packet_alloc_mdns(Error* err);
-extern void		packet_free_header(IPv4Header* header);
-extern void		packet_free_udp(UDPPacket* packet);
+extern void		packet_free_ip4_header(IPv4Header* header);
+extern void		packet_free_udp_header(UDPHeader* packet);
 extern void		packet_free_mdns(MDNSPacket* packet);
 
 #endif

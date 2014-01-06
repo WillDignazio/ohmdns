@@ -3,7 +3,7 @@
 #include "internal.h"
 
 IPv4Header*
-packet_alloc_header(Error* err)
+packet_alloc_ip4_header(Error* err)
 {
 	IPv4Header* header;
 	
@@ -17,7 +17,7 @@ packet_alloc_header(Error* err)
 }
 
 void
-packet_free_header(IPv4Header* header)
+packet_free_ip4_header(IPv4Header* header)
 {
 	if(header == NULL)
 		return;
@@ -25,10 +25,10 @@ packet_free_header(IPv4Header* header)
 	free(header);
 }
 
-UDPPacket*
-packet_alloc_udp(Error* err)
+UDPHeader*
+packet_alloc_udp_header(Error* err)
 {
-	UDPPacket* udpp;
+	UDPHeader* udpp;
 
 	udpp = malloc(sizeof(*udpp));
 	if(udpp == NULL) {
@@ -40,7 +40,7 @@ packet_alloc_udp(Error* err)
 }
 
 void
-packet_free_udp(UDPPacket* packet)
+packet_free_udp_header(UDPHeader* packet)
 {
 	if(packet == NULL)
 		return;
@@ -70,4 +70,3 @@ packet_free_mdns(MDNSPacket* packet)
 
 	free(packet);
 }
-
