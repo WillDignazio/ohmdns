@@ -43,7 +43,7 @@ int
 ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 {
 	struct sockaddr_in s_in;
-	struct in_addr m_in; // Multicast Address
+	struct ip_mreq mreq;
 	int sfd;
 	int r;
 	unsigned char opt_loop;
@@ -76,22 +76,26 @@ ohm_open_socket4(int port, OhmSocket* sock, Error* err)
 	}
 
 	/* Setup the socket to loopback the data it gets */
-	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_LOOP, &opt_loop, sizeof(uint8_t));
+	r = setsockopt(sfd, IPPROTO_IP, IP_MULTICAST_LOOP, &opt_loop, sizeof(unsigned char));
 	if(r == -1) {
 		esys(err, "Failed to set socket option for multicast loop");
 		r = -1;
 		goto fail;
 	}
 
-	/* Setup the socket to the correct multicast address for mdns */
-	r = inet_pton(AF_INET, MDNS_ADDR_STR, &m_in);
-	r = setsockopt(sock->sfd, IPPROTO_IP, IP_MULTICAST_IF, &m_in, sizeof(m_in));
-	if(r == -1) {
-		esys(err, "Failed to set socket option for multicast address");
+	/* Enlist the socket in the multicast group */
+//	inet_pton(AF_INET, MDNS_ADDR_STR, &addr);
+	mreq.imr_multiaddr.s_addr = inet_addr(MDNS_ADDR_STR);
+	mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+
+	r = setsockopt(sfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+	if(r < 0) {
+		esys(err, "Failed to join multicast group");
 		r = -1;
 		goto fail;
 	}
-	
+
+	sock->mreq = mreq;
 	sock->s_in = s_in;
 	sock->sfd = sfd;
 

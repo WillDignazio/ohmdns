@@ -12,7 +12,7 @@ struct OhmSocket
 {
 	int			sfd;
 	struct sockaddr_in	s_in;
-	
+	struct ip_mreq		mreq;
 };
 
 extern OhmSocket*	ohm_alloc_socket(Error* err);
