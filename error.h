@@ -27,10 +27,14 @@ struct ErrorMonitor
 };
 	
 extern void	_error(Error* err, int (*efunc)(Error* err), char* estr, ...);
+extern void	_warn(const char* fnstr, char* wstr, ...);
 extern int	error_sys(Error* err);
 
 #define esys(__err__, __estr__, ...)	\
 	_error(__err__, error_sys, __estr__, ##__VA_ARGS__);
+
+#define ewarn(__wstr__, ...)	\
+	_warn(__func__, __wstr__, ##__VA_ARGS__);
 
 enum
 {

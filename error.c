@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <time.h>
 #include <execinfo.h>
 #include "internal.h"
 
@@ -20,8 +21,25 @@ static ErrorMonitor	emon =
  * Since there may be some thread sillyness, we want each
  * to be capable of producing it's own 'atomic' Errors.
  * To do this, we're going to set the fields whenever 
- * one of the macros is called to _error
+ * one of the macros is called to _error.
  */
+
+static void
+error_write2log(char* str, ...)
+{
+	va_list ap;
+	time_t ti;
+	char date[20];
+	struct tm* tm;
+
+	ti = time(NULL);
+	tm = localtime(&ti);
+	strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", tm);
+
+	va_start(ap, str);
+	dprintf(emon.efd, "%s: ", date);
+	vdprintf(emon.efd, str, ap);
+}
 
 void
 _error(Error* err, int(*efunc)(Error* err), char* estr, ...)
@@ -44,7 +62,7 @@ _error(Error* err, int(*efunc)(Error* err), char* estr, ...)
 
 	/* Write out the Error to the log */
 	vsnprintf(errbuf, ERR_STRLEN, estr, ap);
-	dprintf(emon.efd, "ERROR [%d]: %s, %s\n", err->eid, err->estr, errbuf);
+	error_write2log("ERROR [%d]: %s, %s\n", err->eid, err->estr, errbuf);
 
 	/* Write out the backtrace */
 	for(j=1;j<err->bt_nptrs;j++)
@@ -63,4 +81,18 @@ error_sys(Error* err)
 		return -1;
 
 	return r;
+}
+
+void
+_warn(const char* fnstr, char* wstr, ...)
+{
+	va_list ap;
+	char wbuf[ERR_STRLEN]; // wstr formatted buffer
+
+	if(fnstr == NULL || wstr == NULL)
+		return;
+
+	va_start(ap, wstr);
+	vsnprintf(wbuf, ERR_STRLEN, wstr, ap);
+	error_write2log("WARN %s: %s\n", fnstr, wstr);
 }

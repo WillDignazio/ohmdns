@@ -27,5 +27,6 @@ main(int argc, char* argv[])
 	ohm_open_socket(5555, sock, &err);
 	ohm_close_socket(sock, &err);
 
+	ewarn("This is a test warning");
 	return 0;
 }
