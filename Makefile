@@ -1,5 +1,5 @@
 CC= clang
-CFLAGS= -O0 -Wall -Werror -g
+CFLAGS= -O0 -Wall -Werror -g -I include/
 LIBS=
 
 .PHONY: all clean

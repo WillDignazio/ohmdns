@@ -22,12 +22,10 @@ main(int argc, char* argv[])
 {
 	OhmSocket* sock;
 	Error err;
-	char buf[1024];
 
 	sock = ohm_alloc_socket(&err);
 	ohm_open_socket(5353, "0.0.0.0", sock, &err);
-
-	recv(sock->sfd, buf, sizeof(buf), 0);
+	/* Do Work */
 	ohm_close_socket(sock, &err);
 	return 0;
 }
