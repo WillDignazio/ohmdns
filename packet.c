@@ -26,7 +26,7 @@ packet_free_header(IPv4Header* header)
 }
 
 UDPPacket*
-packet_alloc_udp_packet(Error* err)
+packet_alloc_udp(Error* err)
 {
 	UDPPacket* udpp;
 
@@ -40,7 +40,7 @@ packet_alloc_udp_packet(Error* err)
 }
 
 void
-packet_free_udp_packet(UDPPacket* packet)
+packet_free_udp(UDPPacket* packet)
 {
 	if(packet == NULL)
 		return;
@@ -49,7 +49,7 @@ packet_free_udp_packet(UDPPacket* packet)
 }
 
 MDNSPacket*
-packet_alloc_mdns_packet(Error* err)
+packet_alloc_mdns(Error* err)
 {
 	MDNSPacket* packet;
 	
@@ -63,7 +63,7 @@ packet_alloc_mdns_packet(Error* err)
 }
 
 void
-packet_free_mdns_packet(MDNSPacket* packet)
+packet_free_mdns(MDNSPacket* packet)
 {
 	if(packet == NULL)
 		return;

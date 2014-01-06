@@ -68,10 +68,10 @@ struct MDNSPacket
 #pragma pack(pop)
 
 extern IPv4Header*	packet_alloc_header(Error* err);
-extern UDPPacket*	packet_alloc_udp_packet(Error* err);
-extern MDNSPacket*	packet_alloc_mdns_packet(Error* err);
+extern UDPPacket*	packet_alloc_udp(Error* err);
+extern MDNSPacket*	packet_alloc_mdns(Error* err);
 extern void		packet_free_header(IPv4Header* header);
-extern void		packet_free_udp_packet(UDPPacket* packet);
-extern void		packet_free_mdns_packet(MDNSPacket* packet);
+extern void		packet_free_udp(UDPPacket* packet);
+extern void		packet_free_mdns(MDNSPacket* packet);
 
 #endif
