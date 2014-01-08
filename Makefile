@@ -4,7 +4,7 @@ LIBS=
 
 .PHONY: all clean
 
-CSRC=	packet.c \
+CSRC=	mdns.c \
 	error.c \
 	ohm.c
 

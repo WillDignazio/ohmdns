@@ -28,10 +28,7 @@ main(int argc, char* argv[])
 
 	sock = ohm_alloc_socket(&err);
 	ohm_open_socket(5353, "0.0.0.0", sock, &err);
-	/* Do Work */
 
-	printf("sizeof MDNS packet: %lu\n", sizeof(MDNSPacket));
-	printf("sizeof UDP header: %lu\n", sizeof(UDPHeader));
 	MDNSPacket* packet;
 	packet = (MDNSPacket*)&buffer;
 
@@ -42,6 +39,7 @@ main(int argc, char* argv[])
 		/* Here We Go */
 		printf("packet id: %hu\n", ntohs(packet->id));
 		printf("packet qdcount: %hu\n", ntohs(packet->qdcount));
+		printf("FQDN: %s\n", (char*)&buffer+sizeof(MDNSPacket));
 	}
 
 	ohm_close_socket(sock, &err);

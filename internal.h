@@ -4,5 +4,5 @@
 
 #include <ifaddrs.h>
 #include "error.h"
-#include "packet.h"
+#include "mdns.h"
 #include "ohm.h"
