@@ -9,6 +9,19 @@ typedef struct MDNSPacket MDNSPacket;
 #pragma pack(push)
 #pragma pack(1) // Aligment to 1 byte boundary
 
+
+/* MDNS Packet Flag Masks */
+enum
+{
+	MDNS_OPT_RESP	= 1 << 0,
+	MDNS_OPT_AUTH	= 1 << 5,
+	MDNS_OPT_TRUNC	= 1 << 6,
+	MDNS_OPT_RECURD	= 1 << 7,
+	MDNS_OPT_RECURA	= 1 << 8,
+	MDNS_OPT_VERIFY	= 1 << 10,
+	MDNS_OPT_CHECK	= 1 << 11,
+};
+
 /* MDNS Packet */
 struct MDNSPacket
 {
