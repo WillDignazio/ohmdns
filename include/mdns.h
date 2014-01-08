@@ -13,7 +13,25 @@ typedef struct MDNSPacket MDNSPacket;
 struct MDNSPacket
 {
 	uint16_t	id;		// ID
-	uint16_t	flags;		// Flags
+	
+	union
+	{
+		uint16_t	flags;	// Flags bitfield
+		struct
+		{
+			uint8_t	qr : 1; // Query Response
+			uint8_t op : 4; // Opcode
+			uint8_t aa : 1; // Authoritative
+			uint8_t	tc : 1; // Truncated
+			uint8_t	rd : 1; // Recursion Desired
+			uint8_t	ra : 1; // Recursion Accepted
+			uint8_t zo : 1; // Zero XXX: Must be zero
+			uint8_t ad : 1; // Authentic Data
+			uint8_t cd : 1; // Checking Disabled
+			uint8_t rc : 4;	// Response Code
+		} flag;
+	};
+
 	uint16_t	qdcount;	// # of items in Question ection
 	uint16_t	ancount;	// # of items in Answer section
 	uint16_t	nscount;	// # of items in Authority section
